@@ -20,10 +20,13 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.increment = this.increment.bind(this);
+    this.decrement = this.decrement.bind(this);
+    this.store = 0;
     this.state = {
       number: 0,
       count: 0,
-      increment: this.increment
+      increment: this.increment,
+      decrement: this.decrement
     };
     store.subscribe(() => {
       this.setState({ number: store.getState() });
@@ -34,30 +37,70 @@ class App extends Component {
     this.setState({count: this.state.count + 1});
   }
 
+  decrement() {
+    this.setState({count: this.state.count - 1});
+  }
+
   render() {
     return (
       <div className="App">
         <header className="App-header">
           <Provider value={this.state}>
-            <Consumer>
-              {
-                ({ count, increment }) =>  {
-                  return (
-                    <div>
-                      <h2>{count}</h2>
-                      <button onClick={increment}>INCREMENT</button>
-                    </div>
-                  );
-                }
-              }
-            </Consumer>
+            <ContextCounter />
           </Provider>
-          <h2>{this.state.number}</h2>
-          <button onClick={() => {
-            store.dispatch({ type: 'INCREMENT' });
-          }}>INCREMENT</button>
+          <ReduxCounter number={this.state.number} />
         </header>
       </div>
+    );
+  }
+}
+
+class ReduxCounter extends Component {
+  render() {
+    return (
+      <div style={{
+        borderColor: "#fff",
+        borderStyle: "solid",
+        borderRadius: "6px",
+        borderWidth: "2px",
+        padding: "10px",
+        margin: "10px"
+      }}>
+        <h2>{this.props.number}</h2>
+        <button onClick={() => {
+          store.dispatch({ type: 'INCREMENT' });
+        }}>+</button>
+        <button onClick={() => {
+          store.dispatch({ type: 'DECREMENT' });
+        }}>-</button>
+      </div>
+    );
+  }
+}
+
+class ContextCounter extends Component {
+  render() {
+    return (
+        <Consumer>
+          {
+            ({count, increment, decrement}) => {
+              return (
+                <div style={{
+                  borderColor: "#fff",
+                  borderStyle: "solid",
+                  borderRadius: "6px",
+                  borderWidth: "2px",
+                  padding: "10px",
+                  margin: "10px"
+                }}>
+                  <h2>{count}</h2>
+                  <button onClick={increment}>+</button>
+                  <button onClick={decrement}>-</button>
+                </div>
+              );
+            }
+          }
+        </Consumer>
     );
   }
 }

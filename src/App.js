@@ -21,18 +21,19 @@ class App extends Component {
     super(props);
     this.store = 0;
     this.state = {
-      number: 0,
+      redux_counter_value: 0,
+      context_counter_value: 0,
       counter: {
         increment: () => {
-          this.setState({number: this.state.number + 1});
+          this.setState({ context_counter_value: this.state.context_counter_value + 1 });
         },
         decrement: () => {
-          this.setState({number: this.state.number - 1});
+          this.setState({ context_counter_value: this.state.context_counter_value - 1 });
         }
       }
     };
     store.subscribe(() => {
-      this.setState({ number: store.getState() });
+      this.setState({ redux_counter_value: store.getState() });
     });
   }
 
@@ -41,9 +42,11 @@ class App extends Component {
       <div className="App">
         <header className="App-header">
           <Provider value={this.state}>
+            <h1>Context API</h1>
             <ContextCounter />
           </Provider>
-          <ReduxCounter number={this.state.number} />
+          <h1>Redux</h1>
+          <ReduxCounter number={this.state.redux_counter_value} />
         </header>
       </div>
     );
@@ -78,7 +81,7 @@ class ContextCounter extends Component {
     return (
         <Consumer>
           {
-            ({number, counter}) => {
+            ({ context_counter_value, counter }) => {
               return (
                 <div style={{
                   borderColor: "#fff",
@@ -88,7 +91,7 @@ class ContextCounter extends Component {
                   padding: "10px",
                   margin: "10px"
                 }}>
-                  <h2>{number}</h2>
+                  <h2>{context_counter_value}</h2>
                   <button onClick={counter.increment}>+</button>
                   <button onClick={counter.decrement}>-</button>
                 </div>

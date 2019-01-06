@@ -19,26 +19,21 @@ const { Provider, Consumer } = createContext();
 class App extends Component {
   constructor(props) {
     super(props);
-    this.increment = this.increment.bind(this);
-    this.decrement = this.decrement.bind(this);
     this.store = 0;
     this.state = {
       number: 0,
-      count: 0,
-      increment: this.increment,
-      decrement: this.decrement
+      counter: {
+        increment: () => {
+          this.setState({number: this.state.number + 1});
+        },
+        decrement: () => {
+          this.setState({number: this.state.number - 1});
+        }
+      }
     };
     store.subscribe(() => {
       this.setState({ number: store.getState() });
     });
-  }
-
-  increment() {
-    this.setState({count: this.state.count + 1});
-  }
-
-  decrement() {
-    this.setState({count: this.state.count - 1});
   }
 
   render() {
@@ -83,7 +78,7 @@ class ContextCounter extends Component {
     return (
         <Consumer>
           {
-            ({count, increment, decrement}) => {
+            ({number, counter}) => {
               return (
                 <div style={{
                   borderColor: "#fff",
@@ -93,9 +88,9 @@ class ContextCounter extends Component {
                   padding: "10px",
                   margin: "10px"
                 }}>
-                  <h2>{count}</h2>
-                  <button onClick={increment}>+</button>
-                  <button onClick={decrement}>-</button>
+                  <h2>{number}</h2>
+                  <button onClick={counter.increment}>+</button>
+                  <button onClick={counter.decrement}>-</button>
                 </div>
               );
             }
